@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post a Job - JobPortal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f7fb;
+            color: #1a2a3a;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 32px;
+        }
+
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e4a76;
+        }
+
+        .logo span {
+            color: #2c3e50;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid #eef2f6;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1e4a76;
+            box-shadow: 0 0 0 3px rgba(30,74,118,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            background: #1e4a76;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #143b5c;
+        }
+
+        .alert-success {
+            background: #e6f7e6;
+            border-left: 4px solid #2e7d32;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border-left: 4px solid #c62828;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <div class="logo">Job<span>Portal</span></div>
+        <div class="nav-links">
+            <a href="jobs.html">Jobs</a>
+            <a href="employer-dashboard.html">Dashboard</a>
+            <a href="manage-jobs.html">Manage</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>Post a new job</h2>
+        <div id="message"></div>
+        <div id="warning" class="warning" style="display:none;"></div>
+        <form id="jobForm">
+            <div class="form-group">
+                <label>Job title *</label>
+                <input type="text" id="title" required>
+            </div>
+            <div class="form-group">
+                <label>Description *</label>
+                <textarea id="description" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Requirements</label>
+                <textarea id="requirements" rows="3" placeholder="List skills, experience needed..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Location *</label>
+                <input type="text" id="location" placeholder="Remote, New York, London..." required>
+            </div>
+            <div class="form-group">
+                <label>Application deadline *</label>
+                <input type="date" id="deadline" required>
+            </div>
+            <button type="submit" class="btn">Post job</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+
+    if (!token) {
+        window.location.href = 'login.html';
+    }
+
+    const user = JSON.parse(userStr);
+    if (user.role !== 'employer') {
+        document.getElementById('warning').style.display = 'block';
+        document.getElementById('warning').innerHTML = '⚠️ Only employers can post jobs. You are logged in as a job seeker.';
+        document.getElementById('jobForm').style.display = 'none';
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+
+    const form = document.getElementById('jobForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const data = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            requirements: document.getElementById('requirements').value,
+            location: document.getElementById('location').value,
+            deadline: document.getElementById('deadline').value
+        };
+
+        try {
+            const res = await fetch('http://localhost:3000/jobs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+
+            if (result.success) {
+                document.getElementById('message').innerHTML = `<div class="alert-success">✅ ${result.message}</div>`;
+                form.reset();
+            } else {
+                document.getElementById('message').innerHTML = `<div class="alert-error">❌ ${result.message}</div>`;
+            }
+        } catch (err) {
+            document.getElementById('message').innerHTML = `<div class="alert-error">❌ Server error. Make sure backend is running.</div>`;
+        }
+    });
+</script>
+</body>
+</html>
