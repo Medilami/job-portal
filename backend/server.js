@@ -30,20 +30,39 @@ app.get('/', (req, res) => {
 
 // REGISTER
 app.post('/register', async (req, res) => {
+    console.log('📝 Register request received');
+    console.log('Body:', req.body);
+    
     const { email, password, role, full_name } = req.body;
     
+    // Check if all fields are present
+    if (!email || !password || !role || !full_name) {
+        console.log('❌ Missing fields');
+        return res.json({ success: false, message: 'All fields are required' });
+    }
+    
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query(
+        // Check if user already exists
+        const [existing] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        if (existing.length > 0) {
+            console.log('❌ User already exists:', email);
+            return res.json({ success: false, message: 'Email already exists' });
+        }
+        
+        // Insert new user
+        const result = await db.query(
             'INSERT INTO users (email, password, role, full_name) VALUES (?, ?, ?, ?)',
-            [email, hashedPassword, role, full_name]
+            [email, password, role, full_name]
         );
+        
+        console.log('✅ User registered:', email);
         res.json({ success: true, message: 'User registered successfully!' });
+        
     } catch (error) {
+        console.log('❌ Database error:', error.message);
         res.json({ success: false, message: error.message });
     }
 });
-
 // LOGIN
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
