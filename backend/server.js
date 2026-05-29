@@ -18,7 +18,7 @@ app.use(express.json());
 const db = mysql.createPool({
     host: 'mysql.railway.internal',
     user: 'root',
-    password: 'mvnlpcuQzXLgJQagWKxxxxxxxxxx',  // <-- PUT YOUR FULL PASSWORD HERE
+    password: 'mvnlpcuQzXLgJQagWKlSTDFHNckEPpkk',  // <-- PUT YOUR FULL PASSWORD HERE
     database: 'railway',
     port: 3306,
     waitForConnections: true,
