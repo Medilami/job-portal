@@ -9,7 +9,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors({
-    origin: '*',
+    origin: ['https://prismatic-begonia-55beb8.netlify.app', 'http://localhost:3000'],
     credentials: true
 }));
 app.use(express.json());
