@@ -154,6 +154,7 @@
 </div>
 
 <script>
+    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
@@ -170,7 +171,7 @@
 
     async function loadApplications() {
         try {
-            const res = await fetch('http://localhost:3000/my-applications', {
+            const res = await fetch(`${API_BASE}/my-applications`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();

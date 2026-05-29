@@ -289,6 +289,7 @@
 </div>
 
 <script>
+    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
@@ -311,7 +312,7 @@
     async function searchJobs() {
         const keyword = document.getElementById('keyword').value;
         const location = document.getElementById('location').value;
-        let url = 'http://localhost:3000/jobs/search?';
+        let url = `${API_BASE}/jobs/search?`;
         if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
         if (location) url += `location=${encodeURIComponent(location)}&`;
         const res = await fetch(url);
@@ -326,7 +327,7 @@
     }
 
     async function loadJobs() {
-        const res = await fetch('http://localhost:3000/jobs');
+        const res = await fetch(`${API_BASE}/jobs`);
         const data = await res.json();
         displayJobs(data.jobs);
     }

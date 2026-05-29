@@ -180,6 +180,7 @@
 </div>
 
 <script>
+    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
@@ -200,7 +201,7 @@
     async function updateStatus(applicationId, selectElement) {
         const newStatus = selectElement.value;
         try {
-            const res = await fetch(`http://localhost:3000/applications/${applicationId}/status`, {
+            const res = await fetch(`${API_BASE}/applications/${applicationId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -217,15 +218,13 @@
 
     async function loadDashboard() {
         try {
-            const res = await fetch('http://localhost:3000/employer/applicants', {
+            const res = await fetch(`${API_BASE}/employer/applicants`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
 
             if (data.success && data.applicants && data.applicants.length > 0) {
-                // Calculate stats
                 const uniqueJobs = new Set();
-                let totalApplicants = data.applicants.length;
                 data.applicants.forEach(a => uniqueJobs.add(a.job_title));
                 
                 document.getElementById('stats').innerHTML = `
@@ -234,7 +233,7 @@
                         <div class="stat-label">Active Jobs</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-number">${totalApplicants}</div>
+                        <div class="stat-number">${data.applicants.length}</div>
                         <div class="stat-label">Total Applicants</div>
                     </div>
                 `;

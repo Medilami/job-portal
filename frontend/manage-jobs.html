@@ -191,6 +191,7 @@
 </div>
 
 <script>
+    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
@@ -232,7 +233,7 @@
             deadline: document.getElementById('edit_deadline').value
         };
 
-        const res = await fetch(`http://localhost:3000/jobs/${jobId}`, {
+        const res = await fetch(`${API_BASE}/jobs/${jobId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -248,7 +249,7 @@
 
     async function deleteJob(jobId) {
         if (confirm('Delete this job? All applications will also be deleted.')) {
-            const res = await fetch(`http://localhost:3000/jobs/${jobId}`, {
+            const res = await fetch(`${API_BASE}/jobs/${jobId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -260,7 +261,7 @@
 
     async function loadJobs() {
         try {
-            const res = await fetch('http://localhost:3000/my-jobs', {
+            const res = await fetch(`${API_BASE}/my-jobs`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JobPortal - Find Your Dream Job</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .hero-card {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 60px;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 42px;
+            color: #1e4a76;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #5b6e8c;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1e4a76;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #143b5c;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 2px solid #1e4a76;
+            color: #1e4a76;
+        }
+
+        .btn-outline:hover {
+            background: #1e4a76;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .features {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .feature {
+            font-size: 13px;
+            color: #5b6e8c;
+        }
+
+        @media (max-width: 500px) {
+            .hero-card {
+                padding: 30px 20px;
+            }
+            h1 { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero-card">
+            <h1>JobPortal</h1>
+            <p class="tagline">Connect talent with opportunity</p>
+
+            <div class="btn-group">
+                <a href="login.html" class="btn btn-primary">🔐 Sign In</a>
+                <a href="register.html" class="btn btn-outline">📝 Create Account</a>
+            </div>
+
+            <div class="features">
+                <span class="feature">🔍 Search Jobs</span>
+                <span class="feature">📝 Post Jobs</span>
+                <span class="feature">✅ Apply Online</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

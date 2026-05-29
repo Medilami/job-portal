@@ -180,6 +180,7 @@
 </div>
 
 <script>
+    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
@@ -212,7 +213,7 @@
         };
 
         try {
-            const res = await fetch('http://localhost:3000/jobs', {
+            const res = await fetch(`${API_BASE}/jobs`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

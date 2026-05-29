@@ -169,6 +169,7 @@
 </div>
 
 <script>
+    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
@@ -187,7 +188,7 @@
         event.preventDefault();
         const full_name = document.getElementById('full_name').value;
 
-        const res = await fetch('http://localhost:3000/profile', {
+        const res = await fetch(`${API_BASE}/profile`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -208,7 +209,7 @@
     }
 
     async function loadProfile() {
-        const res = await fetch('http://localhost:3000/profile', {
+        const res = await fetch(`${API_BASE}/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
