@@ -15,15 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 // Database connection
-const db = mysql.createPool({
-    host: 'mysql.railway.internal',
-    user: 'root',
-    password: 'mvnlpcuQzXLgJQagWKlSTDFHNckEPpkk',  // <-- PUT YOUR FULL PASSWORD HERE
-    database: 'railway',
-    port: 3306,
-    waitForConnections: true,
-    connectionLimit: 5
-}).promise();
+const db = mysql.createPool(process.env.MYSQL_URL).promise();
 
 // Test database connection
 async function testDB() {
