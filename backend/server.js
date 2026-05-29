@@ -441,6 +441,16 @@ app.put('/profile', async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 });
+// Test database connection on startup
+async function testDB() {
+    try {
+        const [result] = await db.query('SELECT 1');
+        console.log('✅ Database connected');
+    } catch (err) {
+        console.log('❌ Database error:', err.message);
+    }
+}
+testDB();
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
