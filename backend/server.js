@@ -14,14 +14,17 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const db = mysql.createPool({
-    uri: process.env.DATABASE_URL,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0
-}).promise();
+let db;
+try {
+    db = mysql.createPool({
+        uri: process.env.MYSQL_URL,
+        waitForConnections: true,
+        connectionLimit: 5
+    }).promise();
+    console.log('✅ Database connected');
+} catch (err) {
+    console.log('❌ Database error:', err.message);
+}
 app.get('/', (req, res) => {
     res.send('Server is working!');
 });
