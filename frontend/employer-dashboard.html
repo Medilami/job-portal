@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Employer Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f4f7fb; }
@@ -14,6 +15,69 @@
         .stat-number { font-size: 32px; font-weight: bold; color: #1e4a76; }
         select { padding: 6px 12px; border-radius: 20px; margin-left: 10px; }
         .empty-state { text-align: center; padding: 60px; background: white; border-radius: 20px; }
+
+@media (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .nav-links {
+        justify-content: center;
+    }
+    
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .hero {
+        padding: 20px;
+    }
+    
+    .hero h1 {
+        font-size: 24px;
+    }
+    
+    .search-row {
+        flex-direction: column;
+    }
+    
+    .search-field {
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .job-card {
+        padding: 16px;
+    }
+    
+    .job-title {
+        font-size: 18px;
+    }
+    
+    .job-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
     </style>
 </head>
 <body>
@@ -69,8 +133,8 @@
                     html += `
                         <div class="applicant-card">
                             <h3>${app.job_title}</h3>
-                            <p>👤 ${app.seeker_name} (${app.seeker_email})</p>
-                            <p>📅 Applied: ${new Date(app.applied_at).toLocaleDateString()}</p>
+                            <p> ${app.seeker_name} (${app.seeker_email})</p>
+                            <p>Applied: ${new Date(app.applied_at).toLocaleDateString()}</p>
                             <p><strong>Cover letter:</strong> "${app.cover_letter || 'No cover letter'}"</p>
                             <p>Status: 
                                 <select onchange="updateStatus(${app.id}, this)">

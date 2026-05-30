@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Post a Job - JobPortal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             margin: 0;
@@ -132,6 +133,68 @@
             text-align: center;
             font-size: 14px;
         }
+@media (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .nav-links {
+        justify-content: center;
+    }
+    
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .hero {
+        padding: 20px;
+    }
+    
+    .hero h1 {
+        font-size: 24px;
+    }
+    
+    .search-row {
+        flex-direction: column;
+    }
+    
+    .search-field {
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .job-card {
+        padding: 16px;
+    }
+    
+    .job-title {
+        font-size: 18px;
+    }
+    
+    .job-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
     </style>
 </head>
 <body>
@@ -168,7 +231,7 @@
             </div>
             <div class="form-group">
                 <label>Location *</label>
-                <input type="text" id="location" placeholder="Remote, New York, London..." required>
+                <input type="text" id="location" placeholder="Remote, Visakhapatnam, Bengaluru, Hyderabad..." required>
             </div>
             <div class="form-group">
                 <label>Application deadline *</label>

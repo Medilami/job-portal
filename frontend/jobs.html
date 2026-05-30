@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Find Jobs - JobPortal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             margin: 0;
@@ -243,14 +244,69 @@
             margin-bottom: 20px;
         }
 
-        @media (max-width: 768px) {
-            .header { padding: 12px 20px; }
-            .container { padding: 20px; }
-            .hero { padding: 24px; }
-            .hero h1 { font-size: 22px; }
-            .search-row { flex-direction: column; }
-            .btn { text-align: center; }
-        }
+
+@media (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .nav-links {
+        justify-content: center;
+    }
+    
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .hero {
+        padding: 20px;
+    }
+    
+    .hero h1 {
+        font-size: 24px;
+    }
+    
+    .search-row {
+        flex-direction: column;
+    }
+    
+    .search-field {
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .job-card {
+        padding: 16px;
+    }
+    
+    .job-title {
+        font-size: 18px;
+    }
+    
+    .job-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
     </style>
 </head>
 <body>
@@ -298,7 +354,7 @@
     }
 
     const user = JSON.parse(userStr);
-    document.getElementById('loginStatus').innerHTML = `👋 ${user.full_name} · ${user.role === 'employer' ? 'Employer' : 'Job Seeker'}`;
+    document.getElementById('loginStatus').innerHTML = ` ${user.full_name} · ${user.role === 'employer' ? 'Employer' : 'Job Seeker'}`;
 
     function logout() {
         localStorage.clear();
@@ -337,7 +393,7 @@
         const jobsDiv = document.getElementById('jobs');
 
         if (jobs && jobs.length > 0) {
-            statsDiv.innerHTML = `📊 ${jobs.length} job${jobs.length !== 1 ? 's' : ''} found`;
+            statsDiv.innerHTML = `${jobs.length} job${jobs.length !== 1 ? 's' : ''} found`;
             let html = '';
             for (const job of jobs) {
                 const deadline = new Date(job.deadline);
@@ -345,7 +401,7 @@
                 const isUrgent = daysLeft < 7 && daysLeft > 0;
                 html += `
                     <div class="job-card">
-                        <div class="job-title">${escapeHtml(job.title)}${isUrgent ? '<span class="urgent">⚠️ Urgent</span>' : ''}</div>
+                        <div class="job-title">${escapeHtml(job.title)}${isUrgent ? '<span class="urgent"> Urgent</span>' : ''}</div>
                         <div class="job-meta">
                             <span>📍 ${escapeHtml(job.location)}</span>
                             <span>🏢 ${escapeHtml(job.employer_name)}</span>
@@ -360,7 +416,7 @@
             jobsDiv.innerHTML = html;
         } else {
             statsDiv.innerHTML = '';
-            jobsDiv.innerHTML = '<div class="empty-state"><h3>📭 No jobs found</h3><p>Try different keywords or check back later.</p></div>';
+            jobsDiv.innerHTML = '<div class="empty-state"><h3> No jobs found</h3><p>Try different keywords or check back later.</p></div>';
         }
     }
 

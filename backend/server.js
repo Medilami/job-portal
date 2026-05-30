@@ -8,12 +8,14 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS for Netlify frontend
+// Netlify frontend
 app.use(cors({
     origin: ['https://mejobportal.netlify.app', 'https://prismatic-begonia-55beb8.netlify.app', 'http://localhost:3000'],
     credentials: true
 }));
 app.use(express.json());
+
+
 
 // Database connection
 let db;
@@ -23,17 +25,19 @@ try {
         waitForConnections: true,
         connectionLimit: 5
     }).promise();
-    console.log('✅ Database connected');
+    console.log('Database connected');
 } catch (err) {
-    console.log('❌ Database error:', err.message);
+    console.log('Database error:', err.message);
 }
+
 
 // Test route
 app.get('/', (req, res) => {
     res.json({ message: 'Job Portal API is running' });
 });
 
-// Test database route
+
+// Testing database route
 app.get('/test-db', async (req, res) => {
     try {
         const [result] = await db.query('SELECT 1 as connected');
@@ -43,9 +47,12 @@ app.get('/test-db', async (req, res) => {
     }
 });
 
-// REGISTER
+
+
+
+
 app.post('/register', async (req, res) => {
-    console.log('📝 Register request:', req.body.email);
+    console.log(' Register request:', req.body.email);
     
     const { email, password, role, full_name } = req.body;
     
@@ -66,17 +73,18 @@ app.post('/register', async (req, res) => {
             [email, hashedPassword, role, full_name]
         );
         
-        console.log('✅ User registered:', email);
+        console.log('User registered:', email);
         res.json({ success: true, message: 'User registered successfully!' });
     } catch (err) {
-        console.log('❌ Register error:', err.message);
+        console.log('Register error:', err.message);
         res.json({ success: false, message: err.message });
     }
 });
 
-// LOGIN
+
+
 app.post('/login', async (req, res) => {
-    console.log('📝 Login request:', req.body.email);
+    console.log('Login request:', req.body.email);
     
     const { email, password } = req.body;
     
@@ -112,12 +120,13 @@ app.post('/login', async (req, res) => {
             }
         });
     } catch (err) {
-        console.log('❌ Login error:', err.message);
+        console.log('Login error:', err.message);
         res.json({ success: false, message: err.message });
     }
 });
 
-// GET JOBS
+
+
 app.get('/jobs', async (req, res) => {
     try {
         const [jobs] = await db.query(`
@@ -132,7 +141,8 @@ app.get('/jobs', async (req, res) => {
     }
 });
 
-// POST JOB
+
+
 app.post('/jobs', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     
@@ -159,9 +169,9 @@ app.post('/jobs', async (req, res) => {
         res.json({ success: false, message: err.message });
     }
 });
-// ========== ADDITIONAL ENDPOINTS ==========
 
-// GET MY JOBS (for manage-jobs page)
+
+
 app.get('/my-jobs', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -175,7 +185,9 @@ app.get('/my-jobs', async (req, res) => {
     }
 });
 
-// GET EMPLOYER APPLICANTS
+
+
+
 app.get('/employer/applicants', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -200,7 +212,10 @@ app.get('/employer/applicants', async (req, res) => {
     }
 });
 
-// UPDATE APPLICATION STATUS
+
+
+
+
 app.put('/applications/:id/status', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -217,7 +232,10 @@ app.put('/applications/:id/status', async (req, res) => {
     }
 });
 
-// GET MY APPLICATIONS (for job seekers)
+
+
+
+
 app.get('/my-applications', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -238,7 +256,10 @@ app.get('/my-applications', async (req, res) => {
     }
 });
 
-// GET USER PROFILE
+
+
+
+
 app.get('/profile', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -268,7 +289,10 @@ app.get('/profile', async (req, res) => {
     }
 });
 
-// UPDATE USER PROFILE
+
+
+
+
 app.put('/profile', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -283,7 +307,11 @@ app.put('/profile', async (req, res) => {
     }
 });
 
-// APPLY FOR JOB
+
+
+
+
+
 app.post('/apply', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -294,7 +322,7 @@ app.post('/apply', async (req, res) => {
         
         const { job_id, cover_letter } = req.body;
         
-        // Check if already applied
+        
         const [existing] = await db.query('SELECT * FROM applications WHERE job_id = ? AND job_seeker_id = ?', [job_id, decoded.id]);
         if (existing.length > 0) {
             return res.json({ success: false, message: 'You already applied for this job' });
@@ -307,7 +335,11 @@ app.post('/apply', async (req, res) => {
     }
 });
 
-// DELETE JOB
+
+
+
+
+
 app.delete('/jobs/:id', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });
@@ -325,7 +357,11 @@ app.delete('/jobs/:id', async (req, res) => {
     }
 });
 
-// UPDATE JOB
+
+
+
+
+
 app.put('/jobs/:id', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.json({ success: false, message: 'No token' });

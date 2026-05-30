@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Sign Up - JobPortal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             margin: 0;
@@ -143,6 +144,71 @@
             color: #1e4a76;
             text-decoration: none;
         }
+            .footer-text a:hover {
+                text-decoration: underline;
+            }
+@media (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .nav-links {
+        justify-content: center;
+    }
+    
+    .container {
+        padding: 20px 15px;
+    }
+    
+    .hero {
+        padding: 20px;
+    }
+    
+    .hero h1 {
+        font-size: 24px;
+    }
+    
+    .search-row {
+        flex-direction: column;
+    }
+    
+    .search-field {
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .job-card {
+        padding: 16px;
+    }
+    
+    .job-title {
+        font-size: 18px;
+    }
+    
+    .job-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
     </style>
 </head>
 <body>
@@ -210,13 +276,13 @@
             const result = await res.json();
 
             if (result.success) {
-                msgDiv.innerHTML = `<div class="alert-success">✅ ${result.message}<br>Redirecting to login...</div>`;
+                msgDiv.innerHTML = `<div class="alert-success"> ${result.message}<br>Redirecting to login...</div>`;
                 setTimeout(() => { window.location.href = 'login.html'; }, 1500);
             } else {
-                msgDiv.innerHTML = `<div class="alert-error">❌ ${result.message}</div>`;
+                msgDiv.innerHTML = `<div class="alert-error"> ${result.message}</div>`;
             }
         } catch (err) {
-            msgDiv.innerHTML = `<div class="alert-error">❌ Server error. Make sure backend is running.</div>`;
+            msgDiv.innerHTML = `<div class="alert-error"> Server error. Make sure backend is running.</div>`;
         }
     });
 </script>
