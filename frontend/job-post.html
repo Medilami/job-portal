@@ -182,28 +182,11 @@
 <script>
     const API_BASE = 'https://job-portal-production-e674.up.railway.app';
     const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
 
-    if (!token) {
-        window.location.href = 'login.html';
-    }
+    if (!token) window.location.href = 'login.html';
 
-    const user = JSON.parse(userStr);
-    if (user.role !== 'employer') {
-        document.getElementById('warning').style.display = 'block';
-        document.getElementById('warning').innerHTML = '⚠️ Only employers can post jobs. You are logged in as a job seeker.';
-        document.getElementById('jobForm').style.display = 'none';
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'login.html';
-    }
-
-    const form = document.getElementById('jobForm');
-    form.addEventListener('submit', async (e) => {
+    document.getElementById('jobForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const data = {
             title: document.getElementById('title').value,
             description: document.getElementById('description').value,
@@ -211,27 +194,14 @@
             location: document.getElementById('location').value,
             deadline: document.getElementById('deadline').value
         };
-
-        try {
-            const res = await fetch(`${API_BASE}/jobs`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
-            });
-            const result = await res.json();
-
-            if (result.success) {
-                document.getElementById('message').innerHTML = `<div class="alert-success">✅ ${result.message}</div>`;
-                form.reset();
-            } else {
-                document.getElementById('message').innerHTML = `<div class="alert-error">❌ ${result.message}</div>`;
-            }
-        } catch (err) {
-            document.getElementById('message').innerHTML = `<div class="alert-error">❌ Server error. Make sure backend is running.</div>`;
-        }
+        const res = await fetch(`${API_BASE}/jobs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        alert(result.message);
+        if (result.success) location.reload();
     });
 </script>
 </body>

@@ -1,304 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manage Jobs - JobPortal</title>
+    <title>Manage Jobs</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f4f7fb;
-            color: #1a2a3a;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
-        }
-
-        .header-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1e4a76;
-        }
-
-        .logo span {
-            color: #2c3e50;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            color: #4a5568;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 14px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-
-        .hero {
-            background: linear-gradient(105deg, #e8f0fe 0%, #dce7f5 100%);
-            border-radius: 24px;
-            padding: 28px 32px;
-            margin-bottom: 32px;
-        }
-
-        .job-card {
-            background: white;
-            border-radius: 20px;
-            padding: 22px 24px;
-            margin-bottom: 16px;
-            border: 1px solid #eef2f6;
-        }
-
-        .job-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .job-meta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 10px 0;
-            font-size: 13px;
-            color: #5b6e8c;
-        }
-
-        .btn-edit {
-            background: #eab308;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .btn-delete {
-            background: #dc2626;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 32px;
-            border-radius: 24px;
-            width: 500px;
-            max-width: 90%;
-        }
-
-        .modal-content input,
-        .modal-content textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px;
-            background: white;
-            border-radius: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .header { padding: 12px 20px; }
-            .container { padding: 20px; }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f7fb; }
+        .header { background: white; padding: 16px 32px; display: flex; justify-content: space-between; }
+        .logo { font-size: 22px; font-weight: 700; color: #1e4a76; }
+        .nav a { margin-left: 20px; text-decoration: none; color: #4a5568; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .job-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+        .btn-edit { background: #eab308; color: white; padding: 8px 20px; border: none; border-radius: 40px; cursor: pointer; margin-right: 10px; }
+        .btn-delete { background: #dc2626; color: white; padding: 8px 20px; border: none; border-radius: 40px; cursor: pointer; }
+        .empty-state { text-align: center; padding: 60px; background: white; border-radius: 20px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 500px; max-width: 90%; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; }
     </style>
 </head>
 <body>
-
-<header class="header">
-    <div class="header-inner">
-        <div class="logo">Job<span>Portal</span></div>
-        <div class="nav-links">
+    <div class="header">
+        <div class="logo">JobPortal</div>
+        <div class="nav">
             <a href="jobs.html">Jobs</a>
             <a href="job-post.html">Post Job</a>
-            <a href="employer-dashboard.html">Applicants</a>
             <a href="#" onclick="logout()">Logout</a>
         </div>
     </div>
-</header>
-
-<div class="container">
-    <div class="hero">
-        <h1>✏️ Manage your jobs</h1>
-        <p>Edit or delete your posted job listings</p>
+    <div class="container">
+        <h2>Manage Jobs</h2>
+        <div id="jobs"></div>
     </div>
 
-    <div id="jobs"></div>
-</div>
-
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <h3>Edit Job</h3>
-        <input type="text" id="edit_title" placeholder="Job Title">
-        <textarea id="edit_description" rows="3" placeholder="Description"></textarea>
-        <textarea id="edit_requirements" rows="2" placeholder="Requirements"></textarea>
-        <input type="text" id="edit_location" placeholder="Location">
-        <input type="date" id="edit_deadline">
-        <input type="hidden" id="edit_job_id">
-        <button onclick="updateJob()" style="background:#1e4a76; color:white; padding:10px 20px; border:none; border-radius:40px; cursor:pointer;">Save</button>
-        <button onclick="closeModal()" style="margin-left:10px; padding:10px 20px;">Cancel</button>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Job</h3>
+            <input type="text" id="edit_title" placeholder="Title">
+            <textarea id="edit_description" rows="3" placeholder="Description"></textarea>
+            <textarea id="edit_requirements" rows="2" placeholder="Requirements"></textarea>
+            <input type="text" id="edit_location" placeholder="Location">
+            <input type="date" id="edit_deadline">
+            <input type="hidden" id="edit_job_id">
+            <button onclick="updateJob()" style="background:#1e4a76; color:white; padding:10px 20px;">Save</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
     </div>
-</div>
 
-<script>
-    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-
-    if (!token) {
-        window.location.href = 'login.html';
-    }
-
-    const user = JSON.parse(userStr);
-    if (user.role !== 'employer') {
-        document.getElementById('jobs').innerHTML = '<div class="empty-state"><h3>⚠️ Access Denied</h3><p>This page is for employers only.</p></div>';
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'login.html';
-    }
-
-    function openEditModal(job) {
-        document.getElementById('edit_title').value = job.title;
-        document.getElementById('edit_description').value = job.description;
-        document.getElementById('edit_requirements').value = job.requirements || '';
-        document.getElementById('edit_location').value = job.location;
-        document.getElementById('edit_deadline').value = job.deadline.split('T')[0];
-        document.getElementById('edit_job_id').value = job.id;
-        document.getElementById('editModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('editModal').style.display = 'none';
-    }
-
-    async function updateJob() {
-        const jobId = document.getElementById('edit_job_id').value;
-        const data = {
-            title: document.getElementById('edit_title').value,
-            description: document.getElementById('edit_description').value,
-            requirements: document.getElementById('edit_requirements').value,
-            location: document.getElementById('edit_location').value,
-            deadline: document.getElementById('edit_deadline').value
-        };
-
-        const res = await fetch(`${API_BASE}/jobs/${jobId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
-        });
-        const result = await res.json();
-        alert(result.message);
-        closeModal();
-        loadJobs();
-    }
-
-    async function deleteJob(jobId) {
-        if (confirm('Delete this job? All applications will also be deleted.')) {
-            const res = await fetch(`${API_BASE}/jobs/${jobId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const result = await res.json();
-            alert(result.message);
-            loadJobs();
+    <script>
+        const API_BASE = 'https://job-portal-production-e674.up.railway.app';
+        const token = localStorage.getItem('token');
+        
+        if (!token) window.location.href = 'login.html';
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
         }
-    }
-
-    async function loadJobs() {
-        try {
+        
+        async function loadJobs() {
             const res = await fetch(`${API_BASE}/my-jobs`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-
+            
             if (data.success && data.jobs && data.jobs.length > 0) {
                 let html = '';
                 for (const job of data.jobs) {
                     html += `
                         <div class="job-card">
-                            <div class="job-title">${escapeHtml(job.title)}</div>
-                            <div class="job-meta">
-                                <span>📍 ${escapeHtml(job.location)}</span>
-                                <span>📅 Deadline: ${new Date(job.deadline).toLocaleDateString()}</span>
-                            </div>
-                            <p style="margin: 12px 0;">${escapeHtml(job.description.substring(0, 150))}...</p>
-                            <div>
-                                <button class="btn-edit" onclick='openEditModal(${JSON.stringify(job)})'>✏️ Edit</button>
-                                <button class="btn-delete" onclick="deleteJob(${job.id})">🗑️ Delete</button>
-                            </div>
+                            <h3>${job.title}</h3>
+                            <p>📍 ${job.location} | Deadline: ${new Date(job.deadline).toLocaleDateString()}</p>
+                            <p>${job.description.substring(0, 150)}...</p>
+                            <button class="btn-edit" onclick='editJob(${JSON.stringify(job)})'>✏️ Edit</button>
+                            <button class="btn-delete" onclick="deleteJob(${job.id})">🗑️ Delete</button>
                         </div>
                     `;
                 }
                 document.getElementById('jobs').innerHTML = html;
             } else {
-                document.getElementById('jobs').innerHTML = '<div class="empty-state"><h3>📭 No jobs posted yet</h3><p><a href="job-post.html">Post your first job</a></p></div>';
+                document.getElementById('jobs').innerHTML = '<div class="empty-state"><h3>No jobs posted yet</h3></div>';
             }
-        } catch (err) {
-            document.getElementById('jobs').innerHTML = '<div class="empty-state"><h3>❌ Error loading jobs</h3></div>';
         }
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    loadJobs();
-</script>
+        
+        async function deleteJob(id) {
+            if (confirm('Delete this job?')) {
+                await fetch(`${API_BASE}/jobs/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadJobs();
+            }
+        }
+        
+        function editJob(job) {
+            document.getElementById('edit_job_id').value = job.id;
+            document.getElementById('edit_title').value = job.title;
+            document.getElementById('edit_description').value = job.description;
+            document.getElementById('edit_requirements').value = job.requirements || '';
+            document.getElementById('edit_location').value = job.location;
+            document.getElementById('edit_deadline').value = job.deadline.split('T')[0];
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        
+        async function updateJob() {
+            const id = document.getElementById('edit_job_id').value;
+            await fetch(`${API_BASE}/jobs/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                    title: document.getElementById('edit_title').value,
+                    description: document.getElementById('edit_description').value,
+                    requirements: document.getElementById('edit_requirements').value,
+                    location: document.getElementById('edit_location').value,
+                    deadline: document.getElementById('edit_deadline').value
+                })
+            });
+            closeModal();
+            loadJobs();
+        }
+        
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        loadJobs();
+    </script>
 </body>
 </html>

@@ -159,7 +159,191 @@ app.post('/jobs', async (req, res) => {
         res.json({ success: false, message: err.message });
     }
 });
+// ========== ADDITIONAL ENDPOINTS ==========
 
+// GET MY JOBS (for manage-jobs page)
+app.get('/my-jobs', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const [jobs] = await db.query('SELECT * FROM jobs WHERE employer_id = ? ORDER BY created_at DESC', [decoded.id]);
+        res.json({ success: true, jobs });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// GET EMPLOYER APPLICANTS
+app.get('/employer/applicants', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        if (decoded.role !== 'employer') return res.json({ success: false, message: 'Employers only' });
+        
+        const [applicants] = await db.query(`
+            SELECT a.*, j.title as job_title, j.location as job_location, 
+                   u.full_name as seeker_name, u.email as seeker_email
+            FROM applications a
+            JOIN jobs j ON a.job_id = j.id
+            JOIN users u ON a.job_seeker_id = u.id
+            WHERE j.employer_id = ?
+            ORDER BY a.applied_at DESC
+        `, [decoded.id]);
+        
+        res.json({ success: true, applicants });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// UPDATE APPLICATION STATUS
+app.put('/applications/:id/status', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const { status } = req.body;
+        const applicationId = req.params.id;
+        
+        await db.query('UPDATE applications SET status = ? WHERE id = ?', [status, applicationId]);
+        res.json({ success: true, message: 'Status updated' });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// GET MY APPLICATIONS (for job seekers)
+app.get('/my-applications', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const [applications] = await db.query(`
+            SELECT a.*, j.title, j.location, j.deadline
+            FROM applications a
+            JOIN jobs j ON a.job_id = j.id
+            WHERE a.job_seeker_id = ?
+            ORDER BY a.applied_at DESC
+        `, [decoded.id]);
+        
+        res.json({ success: true, applications });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// GET USER PROFILE
+app.get('/profile', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const [users] = await db.query('SELECT id, email, full_name, role, created_at FROM users WHERE id = ?', [decoded.id]);
+        
+        if (users.length === 0) return res.json({ success: false, message: 'User not found' });
+        
+        let stats = {};
+        if (users[0].role === 'jobseeker') {
+            const [apps] = await db.query('SELECT COUNT(*) as count FROM applications WHERE job_seeker_id = ?', [decoded.id]);
+            stats.applications_count = apps[0].count;
+        } else {
+            const [jobs] = await db.query('SELECT COUNT(*) as count FROM jobs WHERE employer_id = ?', [decoded.id]);
+            const [applicants] = await db.query(`
+                SELECT COUNT(*) as count FROM applications WHERE job_id IN (SELECT id FROM jobs WHERE employer_id = ?)
+            `, [decoded.id]);
+            stats.jobs_count = jobs[0].count;
+            stats.applicants_count = applicants[0].count;
+        }
+        
+        res.json({ success: true, user: users[0], stats });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// UPDATE USER PROFILE
+app.put('/profile', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const { full_name } = req.body;
+        await db.query('UPDATE users SET full_name = ? WHERE id = ?', [full_name, decoded.id]);
+        res.json({ success: true, message: 'Profile updated' });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// APPLY FOR JOB
+app.post('/apply', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        if (decoded.role !== 'jobseeker') return res.json({ success: false, message: 'Only job seekers can apply' });
+        
+        const { job_id, cover_letter } = req.body;
+        
+        // Check if already applied
+        const [existing] = await db.query('SELECT * FROM applications WHERE job_id = ? AND job_seeker_id = ?', [job_id, decoded.id]);
+        if (existing.length > 0) {
+            return res.json({ success: false, message: 'You already applied for this job' });
+        }
+        
+        await db.query('INSERT INTO applications (job_id, job_seeker_id, cover_letter) VALUES (?, ?, ?)', [job_id, decoded.id, cover_letter || '']);
+        res.json({ success: true, message: 'Application submitted successfully!' });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// DELETE JOB
+app.delete('/jobs/:id', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const jobId = req.params.id;
+        
+        // Delete applications first (foreign key constraint)
+        await db.query('DELETE FROM applications WHERE job_id = ?', [jobId]);
+        await db.query('DELETE FROM jobs WHERE id = ? AND employer_id = ?', [jobId, decoded.id]);
+        res.json({ success: true, message: 'Job deleted' });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
+
+// UPDATE JOB
+app.put('/jobs/:id', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ success: false, message: 'No token' });
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+        const jobId = req.params.id;
+        const { title, description, requirements, location, deadline } = req.body;
+        
+        await db.query(
+            'UPDATE jobs SET title = ?, description = ?, requirements = ?, location = ?, deadline = ? WHERE id = ? AND employer_id = ?',
+            [title, description, requirements, location, deadline, jobId, decoded.id]
+        );
+        res.json({ success: true, message: 'Job updated' });
+    } catch (err) {
+        res.json({ success: false, message: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

@@ -1,281 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Profile - JobPortal</title>
+    <title>My Profile</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f4f7fb;
-            color: #1a2a3a;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
-        }
-
-        .header-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1e4a76;
-        }
-
-        .logo span {
-            color: #2c3e50;
-        }
-
-        .nav-links a {
-            color: #4a5568;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 14px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            border: 1px solid #eef2f6;
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #eef2f6;
-            flex-wrap: wrap;
-        }
-
-        .avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1e4a76 0%, #143b5c 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-
-        .stat-box {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1e4a76;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #1e4a76;
-        }
-
-        .btn {
-            background: #1e4a76;
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .alert-success {
-            background: #e6f7e6;
-            border-left: 4px solid #2e7d32;
-            padding: 14px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f7fb; }
+        .header { background: white; padding: 16px 32px; display: flex; justify-content: space-between; }
+        .logo { font-size: 22px; font-weight: 700; color: #1e4a76; }
+        .nav a { margin-left: 20px; text-decoration: none; color: #4a5568; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 20px; padding: 32px; }
+        .avatar { width: 80px; height: 80px; background: #1e4a76; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; }
+        .form-group { margin: 20px 0; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; }
+        .btn { background: #1e4a76; color: white; padding: 12px 28px; border: none; border-radius: 40px; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<header class="header">
-    <div class="header-inner">
-        <div class="logo">Job<span>Portal</span></div>
-        <div class="nav-links">
+    <div class="header">
+        <div class="logo">JobPortal</div>
+        <div class="nav">
             <a href="jobs.html">Jobs</a>
             <a href="#" onclick="logout()">Logout</a>
         </div>
     </div>
-</header>
-
-<div class="container">
-    <div class="card">
-        <div id="message"></div>
-        <div id="profileContent"></div>
+    <div class="container">
+        <div class="card">
+            <div id="profileContent"></div>
+        </div>
     </div>
-</div>
 
-<script>
-    const API_BASE = 'https://job-portal-production-e674.up.railway.app';
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-
-    if (!token) {
-        window.location.href = 'login.html';
-    }
-
-    const currentUser = JSON.parse(userStr);
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'login.html';
-    }
-
-    async function updateProfile(event) {
-        event.preventDefault();
-        const full_name = document.getElementById('full_name').value;
-
-        const res = await fetch(`${API_BASE}/profile`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ full_name })
-        });
-        const result = await res.json();
-
-        if (result.success) {
-            document.getElementById('message').innerHTML = '<div class="alert-success">✅ Profile updated successfully!</div>';
-            currentUser.full_name = full_name;
-            localStorage.setItem('user', JSON.stringify(currentUser));
-            setTimeout(() => location.reload(), 1000);
-        } else {
-            alert(result.message);
+    <script>
+        const API_BASE = 'https://job-portal-production-e674.up.railway.app';
+        const token = localStorage.getItem('token');
+        
+        if (!token) window.location.href = 'login.html';
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
         }
-    }
-
-    async function loadProfile() {
-        const res = await fetch(`${API_BASE}/profile`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            const user = data.user;
-            const stats = data.stats;
-
-            let statsHtml = '';
-            if (user.role === 'jobseeker') {
-                statsHtml = `
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-number">${stats.applications_count || 0}</div>
-                            <div class="stat-label">Jobs Applied</div>
-                        </div>
+        
+        async function loadProfile() {
+            const res = await fetch(`${API_BASE}/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                const user = data.user;
+                document.getElementById('profileContent').innerHTML = `
+                    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+                        <div class="avatar">${user.full_name.charAt(0)}</div>
+                        <div><h2>${user.full_name}</h2><p>${user.email}</p><p>${user.role === 'jobseeker' ? 'Job Seeker' : 'Employer'}</p></div>
                     </div>
-                `;
-            } else {
-                statsHtml = `
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-number">${stats.jobs_count || 0}</div>
-                            <div class="stat-label">Jobs Posted</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-number">${stats.applicants_count || 0}</div>
-                            <div class="stat-label">Applicants Received</div>
-                        </div>
-                    </div>
+                    <form onsubmit="updateProfile(event)">
+                        <div class="form-group"><label>Full Name</label><input type="text" id="full_name" value="${user.full_name}"></div>
+                        <button type="submit" class="btn">Save Changes</button>
+                    </form>
                 `;
             }
-
-            document.getElementById('profileContent').innerHTML = `
-                <div class="profile-header">
-                    <div class="avatar">${user.full_name.charAt(0).toUpperCase()}</div>
-                    <div>
-                        <h2>${escapeHtml(user.full_name)}</h2>
-                        <p>${escapeHtml(user.email)}</p>
-                        <p style="font-size: 13px; color: #5b6e8c;">${user.role === 'jobseeker' ? '🎯 Job Seeker' : '🏢 Employer'} · Member since ${new Date(user.created_at).toLocaleDateString()}</p>
-                    </div>
-                </div>
-                
-                ${statsHtml}
-                
-                <form onsubmit="updateProfile(event)">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="full_name" value="${escapeHtml(user.full_name)}" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" value="${escapeHtml(user.email)}" disabled style="background:#f5f5f5;">
-                    </div>
-                    <button type="submit" class="btn">Save Changes</button>
-                </form>
-            `;
         }
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    loadProfile();
-</script>
+        
+        async function updateProfile(e) {
+            e.preventDefault();
+            const full_name = document.getElementById('full_name').value;
+            await fetch(`${API_BASE}/profile`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ full_name })
+            });
+            alert('Profile updated!');
+            location.reload();
+        }
+        
+        loadProfile();
+    </script>
 </body>
 </html>
